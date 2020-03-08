@@ -1,0 +1,124 @@
+{% load torah_filters %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{{static_url}}favicon.png">
+
+    <title>Paleo Torah</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{static_url}}css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{static_url}}paleo/paleo.css">
+    <style type="text/css">
+      body {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+      .main-box {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        background-color: rgba(86, 61, 124, .15);
+        border: 1px solid rgba(86, 61, 124, .2);
+      }
+      ul {
+        margin-top: 10px;
+      }
+      .trans_word_hover { color: green !important; }
+      .trans_word {
+        border-bottom: 1px solid maroon; 
+        padding:2px; 
+        margin:5px; 
+        line-height: 25px;
+      }
+      .fontred {color: red;}
+    </style>
+    {% block css %}
+    {% endblock %}
+  </head>
+
+  <body>
+    <div class="container"> 
+      <div class="row justify-content-center">
+
+        <div class="col-md-8 col-sm-12 main-box">
+          <table align="center">
+            <tr><td><center>
+              <a href="{{site_url}}1/1"><b>genesis</b></a> |
+              <a href="{{site_url}}2/1"><b>exodus</b></a> |
+              <a href="{{site_url}}3/1"><b>leviticus</b></a> |
+              <a href="{{site_url}}4/1"><b>numbers</b></a> |
+              <a href="{{site_url}}5/1"><b>deuteronomy</b></a>
+              <hr/>
+              <!-- https://stackoverflow.com/a/14389078 -->
+              {% with ''|center:total_chapters as range %}
+              {% for _ in range %}
+                  <a href="{{site_url}}{{title_number}}/{{ forloop.counter }}"><b>{{ forloop.counter }}</b></a> |
+              {% endfor %}
+              {% endwith %}
+            </center></td></tr>
+          </table>
+          <br>
+          <h2><center>{{title}} <small>- {{chapter}}</small></center></h2>
+          {% for line in lines %}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{forloop.counter}}. {{line.english_mtt}}</li> 
+            <li class="list-group-item">{{line.malayalam}}</li>
+            <li class="list-group-item text-right">      
+              <img src="{{static_url}}speaker2.svg" width="20px" style="background: #ccc;top:5px;right: 5px; position:absolute; cursor: pointer;" data-title="{{title}}" data-chapter="{{chapter}}" data-line="{{forloop.counter}}" class="playaudio">
+              <bdo dir="rtl" class="bdo{{forloop.counter}}">
+              {% for word in line.paleo|get_words %}
+                <span style="letter-spacing: -2px;margin-right:10px;">
+                  {% for l in word %}<span class="icon-{{ l | get_letternumber }}"></span>{% endfor %}
+                </span> 
+              {% endfor %}
+              </bdo>
+            </li>
+            <li class="list-group-item">
+              {% for word in line.paleo|get_words %}
+                <span id="word_{{forloop.parentloop.counter}}_{{forloop.counter}}" data-word="{{word}}">{{word|replace_fie}}</span>
+              {% endfor %}
+            </li>
+            <li class="list-group-item" style="font-size: 75%">
+              {% for word in line.paleo|get_words %}
+                <span class="trans_word" data-n="{{forloop.counter}}" data-line="{{forloop.parentloop.counter}}">{{word|get_englishword}}</span>
+              {% endfor %}
+            </li>
+          </ul>
+          {% endfor %}
+
+        </div>
+      </div>
+    </div> <!-- /container -->
+    <script src="{{static_url}}js/jquery-3.3.1.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+      // AUDIO
+      // https://stackoverflow.com/a/8489802/2351696
+      var audioElement = document.createElement('audio');
+      audioElement.addEventListener('ended', function() {
+        // this.play();
+        $('bdo').removeClass('fontred');
+      }, false);
+      $('.playaudio').click(function() {
+        $('.bdo'+$(this).data('line')).addClass('fontred');
+        const fn = `${$(this).data('title')}/${$(this).data('chapter')}_${$(this).data('line')}.mp3`;
+        audioElement.setAttribute('src', `{{static_url}}audio/${fn}`);
+        audioElement.play();
+      });
+      // End of audio 
+
+      $('.trans_word').hover(function(){
+        // when mouse hover on english word
+        $(this).toggleClass('trans_word_hover');
+        const word_num = $(this).data('n');
+        const line_num = $(this).data('line');
+        $(`#word_${line_num}_${word_num}`).toggleClass('trans_word_hover');
+      });
+
+    </script>
+  </body>
+</html>

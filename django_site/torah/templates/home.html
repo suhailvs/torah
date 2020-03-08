@@ -1,0 +1,149 @@
+{% load static %}
+{% load torah_filters %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'favicon.png' %}">
+
+    <title>Paleo Torah</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'paleo/paleo.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'css/grid.css' %}"> -->
+    <style type="text/css">
+      body {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+      .main-box {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        background-color: rgba(86, 61, 124, .15);
+        border: 1px solid rgba(86, 61, 124, .2);
+      }
+      ul {
+        margin-top: 10px;
+      }
+      .trans_word_hover { color: green !important; }
+      .trans_word {
+        border-bottom: 1px solid maroon; 
+        padding:2px; 
+        margin:5px; 
+        line-height: 25px;
+      }
+      .fontred {color: red;}
+    </style>
+    {% block css %}
+    {% endblock %}
+  </head>
+
+  <body>
+    <div class="container"> 
+      <div class="row justify-content-center">
+
+        <div class="col-md-8 col-sm-12 main-box">
+          <form method="post">{% csrf_token %}            
+            <div class="form-row">
+              <div class="col-5 col-sm-3">
+                <select class="form-control form-control-sm" name="title" required>
+                  <option{%if title == "genesis"%} selected{%endif%}>genesis</option>
+                  <option{%if title == "exodus"%} selected{%endif%}>exodus</option>
+                  <option{%if title == "leviticus"%} selected{%endif%}>leviticus</option>
+                  <option{%if title == "numbers"%} selected{%endif%}>numbers</option>
+                  <option{%if title == "deuteronomy"%} selected{%endif%}>deuteronomy</option>
+                </select>
+              </div>
+              <div class="col-2 col-sm-3">
+                <input class="form-control form-control-sm" type="number" value="{{chapter}}" 
+                  name="chapter" placeholder="Chapter" required>
+              </div>              
+              <div class="col-3 col-sm-3"><input type="submit" class="btn btn-primary btn-sm" value="Show"></div>
+            </div>
+          </form><br>
+            
+            {% for line in lines %}
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">{{forloop.counter}}. {{line.malayalam}}</li> 
+              <li class="list-group-item">{{line.english}}</li> 
+              <li class="list-group-item text-right">{{line.hebrew}}</li> 
+              <li class="list-group-item text-right">
+                <bdo dir="rtl">
+                {% for word in line.paleo|get_words %}
+                  <span>{% for l in word %}{{ l | get_hebrewletter }}{% endfor %}  </span>
+                {% endfor %}
+                </bdo>
+              </li>
+              <li class="list-group-item">{{line.english_mtt}}</li> 
+              
+              <li class="list-group-item text-right">      
+                <img src="{% static 'speaker2.svg' %}" width="20px" style="background: #ccc;top:5px;right: 5px; position:absolute; cursor: pointer;" data-title="{{title}}" data-chapter="{{chapter}}" data-line="{{forloop.counter}}" data-start="{{line.segment.0}}" data-end="{{line.segment.1}}" class="playaudio">
+                <bdo dir="rtl" class="bdo{{forloop.counter}}">
+                {% for word in line.paleo|get_words %}
+                  <span style="letter-spacing: -2px;margin-right:10px;">
+                    {% for l in word %}<span class="icon-{{ l | get_letternumber }}"></span>{% endfor %}
+                  </span> 
+                {% endfor %}
+                </bdo>
+              </li>
+              <li class="list-group-item">
+                {% for word in line.paleo|get_words %}
+                  <span id="word{{forloop.counter}}" data-word="{{word}}">{{word|replace_fie}}</span>
+                {% endfor %}
+              </li>
+              <li class="list-group-item" style="font-size: 75%">
+                {% for word in line.paleo|get_words %}
+                  <span class="trans_word" data-n="{{forloop.counter}}">{{word|get_englishword}}</span>
+                {% endfor %}
+              </li>
+            </ul>
+            {% endfor %}
+
+        </div>
+      </div>
+    </div> <!-- /container -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}" type="text/javascript"></script>
+    <!-- <script src="{% static 'js/bootstrap.js' %}" type="text/javascript"></script> -->
+    
+    <script type="text/javascript">
+      // AUDIO
+      // https://stackoverflow.com/a/8489802/
+      // https://stackoverflow.com/a/6039185/
+      var segmentEnd;
+      var audioElement = document.createElement('audio');
+      audioElement.addEventListener('timeupdate', function (){
+        if (segmentEnd && audioElement.currentTime >= segmentEnd) {
+          audioElement.pause();
+          $('bdo').removeClass('fontred');
+        }
+      }, false);
+
+      function playSegment(startTime, endTime){
+        segmentEnd = endTime;
+        audioElement.currentTime = startTime;
+        audioElement.play();
+      }
+      $('.playaudio').click(function() {
+        if($(this).data('title') == 'genesis'){
+          $('.bdo'+$(this).data('line')).addClass('fontred');
+          const fn = `genesis_${$(this).data('chapter')}_64kb.mp3`;
+          audioElement.setAttribute('src', `{% static "genesis" %}/${fn}`);
+          playSegment(parseFloat($(this).data('start')),parseFloat($(this).data('end')));
+        }        
+      });
+      // End of audio 
+
+      $('.trans_word').hover(function(){
+        // when mouse hover on english word
+        $(this).toggleClass('trans_word_hover');
+        const word_num = $(this).data('n');
+        $("#word"+word_num).toggleClass('trans_word_hover');
+      });
+
+    </script>
+  </body>
+</html>
