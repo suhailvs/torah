@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
+from torah.views import ChapterView, showoutline
 urlpatterns = [
-	path('', include(('torah.urls','torah'),namespace='torah')),
+	path('<slug:title>/', showoutline, name='showoutline'),
+	path('', ChapterView.as_view(), name='home'),
+	path('<slug:title>/<int:chapter>/', ChapterView.as_view(), name='showchapter'),
     path('admin/', admin.site.urls),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
