@@ -7,16 +7,15 @@ site_generator.generate()
 """
 
 from django.template.loader import render_to_string
-import os, json, csv
-
+import os, json
+from tanach.books import TANACH_BOOKS
 from tanach.misc import get_csv, calculate_line_number
 
 class GenerateHtml:
     def __init__(self):
-        self.titles = ['genesis','exodus','leviticus','numbers','deuteronomy']
+        self.titles = [b['book'].lower() for b in TANACH_BOOKS[:5]] #['genesis','exodus','leviticus','numbers','deuteronomy']
         self.translations = ['paleo','english'] #'english_mtt', 'malayalam'] # 'english', 'malayalam']
         self.datas = self.get_datas_dict()
-        self.books_count = get_csv('counts')
 
     def get_audio_segment(self, chapter,line):
         try:
@@ -28,19 +27,19 @@ class GenerateHtml:
             return ['1','2']
 
     def generate(self):
-        for n_book,c_book in enumerate(self.books_count[:5]): # only torah
-            print(f'Loading book {self.titles[n_book]} ...')
-            total_chapters = len(c_book)
-            for n_chapter,c_chapter in enumerate(c_book):
-                context = {'title':self.titles[n_book], 'chapter':n_chapter+1, 'lines': [], 'total_chapters':total_chapters}
-                for line in range(int(c_chapter)):
+        for n_book,c_book in enumerate(TANACH_BOOKS[:5]): # only torah
+            print(f'Loading book {c_book["book"]} ...')
+            total_chapters = len(c_book['chapters'])
+            for n_chapter,c_chapter in enumerate(c_book['chapters']):
+                context = {'title':c_book["book"].lower(), 'chapter':n_chapter+1, 'lines': [], 'total_chapters':total_chapters}
+                for line in range(c_chapter):
                     dict_line_trans = {'segment':self.get_audio_segment(n_chapter+1, line)}
                     for k in self.translations:
                         lineno = calculate_line_number(n_book+1, n_chapter+1,line+1)-1
                         try:
                             dict_line_trans[k] = self.datas[k][lineno] #[title][chapter][line]
                         except IndexError:
-                            print(k, chapter, line)
+                            print(k, n_chapter, line)
 
                     context['lines'].append(dict_line_trans)
                 self.create_html_file(context)

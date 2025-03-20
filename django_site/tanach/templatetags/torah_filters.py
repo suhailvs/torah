@@ -4,7 +4,8 @@ register = template.Library()
 # PATTERN = 'abgdefzhjiklmnxopsqrct'
 HEBREW_UNICODE = "אבגדהוזחטיכלמנסעפצקרשת"
 KOREN = "ABGDHWZX+YKLMNSOPCQR$T"
-
+HEBREW_EXTRA = 'ךםןףץ'
+KOREN_EXTRA = 'KMNPC'
 # fiej = lambda p: p.replace('f','v').replace('i','y').replace('e','H').replace('j','T')
 
 @register.filter(name='get_letternumber')
