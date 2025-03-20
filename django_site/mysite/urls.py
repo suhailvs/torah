@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from tanach import views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('',views.showline),
+	path('<int:book>/<int:chapter>/<int:line>/', views.showline, name='showline'),
 ]
