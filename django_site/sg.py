@@ -14,7 +14,7 @@ from tanach.misc import get_csv, calculate_line_number
 class GenerateHtml:
     def __init__(self):
         self.titles = [b['book'].lower() for b in TANACH_BOOKS[:5]] #['genesis','exodus','leviticus','numbers','deuteronomy']
-        self.translations = ['paleo','english'] #'english_mtt', 'malayalam'] # 'english', 'malayalam']
+        self.translations = ['paleo','english','english_line'] #'english_mtt', 'malayalam'] # 'english', 'malayalam']
         self.datas = self.get_datas_dict()
 
     def get_audio_segment(self, chapter,line):
@@ -47,7 +47,7 @@ class GenerateHtml:
     def get_datas_dict(self):
         datas = {}
         for lang in self.translations:
-            csv_names={'paleo':'words','english':'en_words'}
+            csv_names={'paleo':'words','english':'en_words','english_line':'en_lines'}
             datas[lang] = get_csv(csv_names[lang])
         return datas
 
