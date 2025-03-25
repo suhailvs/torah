@@ -19,8 +19,8 @@ from django.urls import path
 from tanach import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.showline),
+    # path('',views.showline),
 	path('<int:book>/<int:chapter>/<int:line>/', views.showline, name='showline'),
-    path("words/", views.word_list, name="word_list"),
+    path("", views.word_list, name="word_list"),
     path("words/<str:word>/", views.show_word, name="word"),
 ]
