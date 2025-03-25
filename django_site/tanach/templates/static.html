@@ -68,7 +68,7 @@
 
           {% for line in lines %}
           <ul class="list-group list-group-flush">
-            <li class="list-group-item"><span id="{{forloop.counter}}">{{forloop.counter}}</span>. {{line.english}}</li> 
+            <li class="list-group-item"><span id="{{forloop.counter}}">{{forloop.counter}}</span>. {{line.english_line}}</li> 
             <!-- <li class="list-group-item">{{line.malayalam}}</li> -->
             <li class="list-group-item text-right">
               <bdo dir="rtl" class="bdo{{forloop.counter}}">
@@ -90,7 +90,7 @@
               </bdo>
               <div class="text-left">
                 {% for word in line.paleo %}
-                <span class="mc" data-eng="{{word|get_englishword}}">{{word}}</span>
+                <span class="mc" data-eng="{{line.english|get_key:forloop.counter0}}">{{word}}</span>
                 {% endfor %}
                 <p class="eng_trans"></p>
               </div>              
