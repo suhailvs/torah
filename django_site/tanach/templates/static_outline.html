@@ -1,0 +1,63 @@
+{% load torah_filters %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{{static_url}}favicon.png">
+
+    <title>Paleo Torah</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{static_url}}css/bootstrap.min.css">
+    <style type="text/css">
+      body {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        font-family: "Frank Ruehl Libre", "Hebrew Text Font", "adobe-garamond-pro", "Crimson Text", Georgia, serif;
+        color: #666;
+      }
+      .main-box {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        background-color: rgba(86, 61, 124, .15);
+        border: 1px solid rgba(86, 61, 124, .2);
+      }
+      table a {color: #4a6da7}
+      ul { margin-top: 10px; list-style: none;}
+    </style>
+  </head>
+
+  <body>
+    <div class="container"> 
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-sm-12 main-box">
+          <table align="center">
+            <tr><td><center>
+              <a href="{{site_url}}1"><b>Genesis</b></a> |
+              <a href="{{site_url}}2"><b>Exodus</b></a> |
+              <a href="{{site_url}}3"><b>Leviticus</b></a> |
+              <a href="{{site_url}}4"><b>Numbers</b></a> |
+              <a href="{{site_url}}5"><b>Deuteronomy</b></a>
+            </center></td></tr>
+          </table><hr>
+          <h3>{{title|title}} Outline</h3>
+          {% for chapter in outline %}
+          <strong>Chapter {{forloop.counter}}</strong>
+          <ul>
+            {% for line in chapter %}
+            <li>{{line.1}} 
+              <a href="{{site_url}}{{title_number}}/{{ forloop.parentloop.counter }}#{{line.0}}">{{line.0}}</a>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endfor %}
+        </div>
+      </div>
+    </div> 
+
+
+  </body>
+</html>

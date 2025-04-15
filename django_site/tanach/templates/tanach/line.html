@@ -1,0 +1,18 @@
+{% extends "tanach/base.html" %}
+{% load torah_filters %}
+{% block body %}
+<div class="card">
+  <div class="card-header"> {{current.book}} - {{current.chapter}}:{{current.line}} ({{lineno}})</div>  
+  <div class="card-body">
+    <table class="table table-bordered">
+    <tr>{% for w in words %}<td>{{w}}</td>{% endfor %}</tr>
+    <tr>{% for w in en_words %}<td>{{w}}</td>{% endfor %}</tr>
+    <tr><td colspan="{{total_words}}">{{en_lines}}</td></tr>
+    </table>          
+  </div>
+  <div class="card-footer">          
+    <a class="btn btn-secondary" href="{% url 'showline' current.book current.chapter current.line|add:"-1" %}">&lt;- prev</a> 
+    <a class="btn btn-secondary" href="{% url 'showline' current.book current.chapter current.line|add:"1" %}">next -&gt;</a>
+  </div>
+</div> 
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "tanach/base.html" %}
+{% load torah_filters %}
+{% block body %}
+{% for key,value in words.items %}
+  <h1 id="ا" style="text-align: center;">{{key}}</h1>
+  <div class="row well">
+    {% for root in value %}
+    <div class="col-md-3">
+      <a style="color: black;" href="{% url 'word' root.token %}">
+      ({{forloop.counter}}) {{root.token}}</a>
+    </div>
+    {% endfor %}
+  </div>
+  <hr>
+{% endfor %}
+{% endblock %}

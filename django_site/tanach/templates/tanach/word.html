@@ -1,0 +1,14 @@
+{% extends "tanach/base.html" %}
+{% load torah_filters %}
+{% block body %}
+<table class="table table-bordered">
+	<tr><th>Similar Words</th><th>Translation</th><th>Position</th></tr>
+	{% for w in words %}
+	<tr><td>{{w.token}}</td><td>{{w.meaning}}</td>
+		<td>
+			<a style="color: black; text-decoration: none;" href="{% url 'showline' w.book w.chapter w.line %}">
+				book: {{w.book}} ({{w.chapter}}:{{w.line}} at {{w.position}})</a>
+		</td></tr>
+	{% endfor %}
+</table>
+{% endblock %}

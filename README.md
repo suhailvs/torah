@@ -1,13 +1,19 @@
 # [Torah](https://suhailvs.github.io/torah/)
 
-## Static Site Generation
-	
-	$ cd django_site
-    $ pip install django
-    $ ./manage.py shell
+New commit: 
+`git add ., git commit -m 't', git reset --soft HEAD~2, git restore --staged docs/`
 
-    >>> import sg
-	>>> sg.g()
+
+## Static Site Generation
+
+```shell
+$ cd django_site
+$ pip install django
+$ ./manage.py shell
+
+>>> import sg
+>>> sg.g()
+```
 
 
 ## Number of lines
